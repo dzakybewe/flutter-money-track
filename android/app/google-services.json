@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "213434082305",
+    "project_id": "moneytrack-41f72",
+    "storage_bucket": "moneytrack-41f72.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:213434082305:android:02f496901194903d604c00",
+        "android_client_info": {
+          "package_name": "com.example.flutter_money_track"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9Hgkvzj7QZVzjRvJswo7pRVMGXAkN4ys"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

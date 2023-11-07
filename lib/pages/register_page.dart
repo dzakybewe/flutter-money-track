@@ -1,20 +1,56 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_money_track/auth/authentication.dart';
 import 'package:flutter_money_track/components/my_button.dart';
 import 'package:flutter_money_track/components/my_text_field.dart';
+import 'package:flutter_money_track/supportwidgets/support_widgets_functions.dart';
 
-class RegisterPage extends StatelessWidget {
-  // Text Editing Controller
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
 
+class RegisterPage extends StatefulWidget {
   final void Function()? onPressed;
 
-  RegisterPage({super.key, required this.onPressed});
+  const RegisterPage({super.key, required this.onPressed});
 
-  // Login Method
-  void register(){
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
 
+class _RegisterPageState extends State<RegisterPage> {
+  // Text Editing Controller
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
+
+  // Register Method
+  Future<void> createUserWithEmailAndPassword() async {
+    showDialog(
+        context: context,
+        builder: (context)
+        => const Center(
+          child: CircularProgressIndicator(),
+        )
+    );
+
+    if (passwordController.text != confirmPasswordController.text){
+      // loading popup
+      Navigator.pop(context);
+      
+      displayPopupMessage('Passwords don\'t match!', context);
+    } else {
+      try {
+        UserCredential userCredential = await Authentication().createUserWithEmailAndPassword(
+            email: emailController.text,
+            password: passwordController.text
+        );
+
+        if(context.mounted) return Navigator.pop(context);
+      } on FirebaseAuthException catch(e) {
+        if(context.mounted) return Navigator.pop(context);
+
+        if(context.mounted) return displayPopupMessage(e.message!, context);
+      }
+    }
   }
 
   @override
@@ -48,6 +84,15 @@ class RegisterPage extends StatelessWidget {
 
                   const SizedBox(height: 50),
 
+                  // Username Field
+                  MyTextField(
+                    controller: usernameController,
+                    hintText: 'Username',
+                    obscureText: false,
+                  ),
+
+                  const SizedBox(height: 15),
+
                   // Email Field
                   MyTextField(
                     controller: emailController,
@@ -64,10 +109,10 @@ class RegisterPage extends StatelessWidget {
                     obscureText: true,
                   ),
 
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 15),
 
                   MyTextField(
-                    controller: passwordController,
+                    controller: confirmPasswordController,
                     hintText: 'Confirm Password',
                     obscureText: true,
                   ),
@@ -77,9 +122,8 @@ class RegisterPage extends StatelessWidget {
                   // Login Button
                   MyButton(
                       text: 'Register',
-                      onTap: register
+                      onTap: createUserWithEmailAndPassword
                   ),
-
 
                   // Don't have an account, register
                   Row(
@@ -87,7 +131,7 @@ class RegisterPage extends StatelessWidget {
                     children: [
                       const Text('Already have an account? '),
                       TextButton(
-                        onPressed: onPressed,
+                        onPressed: widget.onPressed,
                         style: TextButton.styleFrom(
                             padding: EdgeInsets.zero
                         ),

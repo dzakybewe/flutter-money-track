@@ -14,6 +14,7 @@ class MyTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller,
       obscureText: obscureText,
       decoration: InputDecoration(
         fillColor: const Color(0xFFC4C4C4).withAlpha(30),
@@ -22,7 +23,7 @@ class MyTextField extends StatelessWidget {
             borderRadius: BorderRadius.circular(15),
             borderSide: BorderSide.none),
         hintText: hintText,
-        contentPadding: EdgeInsets.all(10)),
+        contentPadding: const EdgeInsets.all(10)),
     );
   }
 }

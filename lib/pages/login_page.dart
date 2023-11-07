@@ -1,20 +1,49 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_money_track/components/my_button.dart';
 import 'package:flutter_money_track/components/my_text_field.dart';
-import 'package:flutter_money_track/pages/register_page.dart';
 
-class LoginPage extends StatelessWidget {
-  // Text Editing Controller
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+import '../auth/authentication.dart';
+import '../supportwidgets/support_widgets_functions.dart';
 
+class LoginPage extends StatefulWidget {
   final void Function()? onPressed;
 
-  LoginPage({super.key, required this.onPressed});
+  const LoginPage({super.key, required this.onPressed});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  // Text Editing Controller
+  final emailController = TextEditingController();
+
+  final passwordController = TextEditingController();
 
   // Login Method
-  void login(){
+  Future<void> signInWithEmailAndPassword() async {
+    showDialog(
+        context: context,
+        builder: (context)
+        => const Center(
+          child: CircularProgressIndicator(),
+        ),
+    );
 
+    try {
+      UserCredential userCredential = await Authentication().signInWithEmailAndPassword(
+          email: emailController.text,
+          password: passwordController.text
+      );
+
+      if (context.mounted) return Navigator.pop(context);
+
+    } on FirebaseAuthException catch(e) {
+      if (context.mounted) return Navigator.pop(context);
+
+      if (context.mounted) return displayPopupMessage(e.message!, context);
+    }
   }
 
   @override
@@ -35,16 +64,14 @@ class LoginPage extends StatelessWidget {
                     size: 80,
                   ),
 
-                  SizedBox(height: 20,),
+                  const SizedBox(
+                    height: 20,
+                  ),
 
                   // Welcome Text
-                  const Text(
-                    'M o n e y T r a c k',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w900
-                    )
-                  ),
+                  const Text('M o n e y T r a c k',
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
 
                   const SizedBox(height: 50),
 
@@ -68,9 +95,7 @@ class LoginPage extends StatelessWidget {
 
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text('Forgot Password')
-                    ],
+                    children: [Text('Forgot Password')],
                   ),
 
                   const SizedBox(height: 20),
@@ -78,9 +103,8 @@ class LoginPage extends StatelessWidget {
                   // Login Button
                   MyButton(
                       text: 'LOGIN',
-                      onTap: login
+                      onTap: signInWithEmailAndPassword
                   ),
-
 
                   // Don't have an account, register
                   Row(
@@ -88,10 +112,8 @@ class LoginPage extends StatelessWidget {
                     children: [
                       const Text('Dont have an account? '),
                       TextButton(
-                        onPressed: onPressed,
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero
-                        ),
+                        onPressed: widget.onPressed,
+                        style: TextButton.styleFrom(padding: EdgeInsets.zero),
                         child: const Text(
                           'Register here',
                           style: TextStyle(
@@ -101,7 +123,6 @@ class LoginPage extends StatelessWidget {
                       )
                     ],
                   ),
-
                 ],
               ),
             ),
