@@ -28,7 +28,6 @@ class Authentication {
     );
   }
 
-
   // for logout
   Future<void> signOut() async {
     await _auth.signOut();

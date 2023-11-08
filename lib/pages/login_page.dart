@@ -18,7 +18,6 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   // Text Editing Controller
   final emailController = TextEditingController();
-
   final passwordController = TextEditingController();
 
   // Login Method
@@ -44,6 +43,14 @@ class _LoginPageState extends State<LoginPage> {
 
       if (context.mounted) return displayPopupMessage(e.message!, context);
     }
+    dispose();
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
   }
 
   @override

@@ -51,6 +51,17 @@ class _RegisterPageState extends State<RegisterPage> {
         if(context.mounted) return displayPopupMessage(e.message!, context);
       }
     }
+    dispose();
+
+  }
+
+  @override
+  void dispose() {
+    usernameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
   }
 
   @override

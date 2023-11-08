@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_money_track/auth/authentication.dart';
-import 'package:flutter_money_track/auth/login_or_register.dart';
+import 'package:flutter_money_track/auth/page_setter.dart';
 
-import 'home_page.dart';
+import 'base_page.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -19,9 +19,9 @@ class _AuthPageState extends State<AuthPage> {
       stream: Authentication().authStateChanges,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return HomePage();
+          return const BasePage();
         } else {
-          return const LoginOrRegister();
+          return const PageSetter();
         }
       },
     );

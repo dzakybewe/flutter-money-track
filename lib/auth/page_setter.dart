@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_money_track/pages/login_page.dart';
 import 'package:flutter_money_track/pages/register_page.dart';
 
-class LoginOrRegister extends StatefulWidget {
-  const LoginOrRegister({super.key});
+class PageSetter extends StatefulWidget {
+  const PageSetter({super.key});
 
   @override
-  State<LoginOrRegister> createState() => _LoginOrRegisterState();
+  State<PageSetter> createState() => _PageSetterState();
 }
 
-class _LoginOrRegisterState extends State<LoginOrRegister> {
+class _PageSetterState extends State<PageSetter> {
   // initially show login page
   bool showLoginPage = true;
 
   // toggle between login and register page
-  void togglePages(){
+  void toggleLoginRegister(){
     setState(() {
       showLoginPage = !showLoginPage;
     });
@@ -23,9 +23,9 @@ class _LoginOrRegisterState extends State<LoginOrRegister> {
   @override
   Widget build(BuildContext context) {
     if (showLoginPage) {
-      return LoginPage(onPressed: togglePages);
+      return LoginPage(onPressed: toggleLoginRegister);
     } else {
-      return RegisterPage(onPressed: togglePages);
+      return RegisterPage(onPressed: toggleLoginRegister);
     }
   }
 }
