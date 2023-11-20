@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_money_track/auth/authentication.dart';
+import 'package:flutter_money_track/auth/my_database.dart';
 import 'package:flutter_money_track/components/my_button.dart';
 import 'package:flutter_money_track/components/my_text_field.dart';
 import 'package:flutter_money_track/supportwidgets/support_widgets_functions.dart';
@@ -44,14 +45,20 @@ class _RegisterPageState extends State<RegisterPage> {
             password: passwordController.text
         );
 
-        if(context.mounted) return Navigator.pop(context);
+        /// add user to firestore
+        MyDatabase().addNewUserToDb(
+          userCredential,
+          usernameController.text
+        );
+
       } on FirebaseAuthException catch(e) {
         if(context.mounted) return Navigator.pop(context);
 
         if(context.mounted) return displayPopupMessage(e.message!, context);
       }
     }
-    dispose();
+
+
 
   }
 
@@ -100,6 +107,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     controller: usernameController,
                     hintText: 'Username',
                     obscureText: false,
+                    inputType: TextInputType.text,
                   ),
 
                   const SizedBox(height: 15),
@@ -109,6 +117,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     controller: emailController,
                     hintText: 'Email',
                     obscureText: false,
+                    inputType: TextInputType.emailAddress,
                   ),
 
                   const SizedBox(height: 15),
@@ -118,6 +127,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     controller: passwordController,
                     hintText: 'Password',
                     obscureText: true,
+                    inputType: TextInputType.text,
                   ),
 
                   const SizedBox(height: 15),
@@ -126,6 +136,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     controller: confirmPasswordController,
                     hintText: 'Confirm Password',
                     obscureText: true,
+                    inputType: TextInputType.text,
                   ),
 
                   const SizedBox(height: 20),

@@ -37,6 +37,10 @@ dependencies:
   cupertino_icons: ^1.0.2
   firebase_core: ^2.13.1
   firebase_auth: ^4.6.2
+  cloud_firestore: ^4.12.2
+  money_formatter: ^0.0.5
+  fl_chart: ^0.64.0
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:

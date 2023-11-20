@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_money_track/components/mini_header_background.dart';
-import '../components/mini_header_content.dart';
+import 'package:flutter_money_track/components/mini_header.dart';
+
 
 class BudgetPage extends StatelessWidget {
   const BudgetPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Column(
       children: [
-        MiniHeaderBackground(),
-        MiniHeaderContent(title: 'Budget'),
+        Stack(
+          children: [
+            MiniHeader(title: 'Budget',),
+          ],
+        ),
+        /// Lanjutin Kode dibawah sini biar ga numpuk di header
+
       ],
     );
   }

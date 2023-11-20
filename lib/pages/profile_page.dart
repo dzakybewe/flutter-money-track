@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../components/mini_header_background.dart';
-import '../components/mini_header_content.dart';
-
+import '../components/mini_header.dart';
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
@@ -10,8 +7,7 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        MiniHeaderBackground(),
-        MiniHeaderContent(title: 'Profile'),
+        MiniHeader(title: 'Profile',),
       ],
     );
   }

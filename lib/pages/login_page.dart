@@ -22,28 +22,17 @@ class _LoginPageState extends State<LoginPage> {
 
   // Login Method
   Future<void> signInWithEmailAndPassword() async {
-    showDialog(
-        context: context,
-        builder: (context)
-        => const Center(
-          child: CircularProgressIndicator(),
-        ),
-    );
-
     try {
       UserCredential userCredential = await Authentication().signInWithEmailAndPassword(
           email: emailController.text,
           password: passwordController.text
       );
 
-      if (context.mounted) return Navigator.pop(context);
-
     } on FirebaseAuthException catch(e) {
       if (context.mounted) return Navigator.pop(context);
 
       if (context.mounted) return displayPopupMessage(e.message!, context);
     }
-    dispose();
   }
 
   @override
@@ -87,6 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                     controller: emailController,
                     hintText: 'Email',
                     obscureText: false,
+                    inputType: TextInputType.emailAddress,
                   ),
 
                   const SizedBox(height: 15),
@@ -96,6 +86,7 @@ class _LoginPageState extends State<LoginPage> {
                     controller: passwordController,
                     hintText: 'Password',
                     obscureText: true,
+                    inputType: TextInputType.text,
                   ),
 
                   const SizedBox(height: 10),
