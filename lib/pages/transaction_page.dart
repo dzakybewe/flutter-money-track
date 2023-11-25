@@ -8,7 +8,7 @@ import '../components/mini_header.dart';
 import '../components/my_transaction_tile.dart';
 
 class TransactionPage extends StatefulWidget {
-  TransactionPage({super.key});
+  const TransactionPage({super.key});
 
   @override
   State<TransactionPage> createState() => _TransactionPageState();
@@ -36,20 +36,47 @@ class _TransactionPageState extends State<TransactionPage> {
               );
             }
             if (snapshot.hasError) {
-              return Center(
-                  child: Text('Error: ${snapshot.error}')
+              return Column(
+                children: [
+                  const MiniHeader(title: 'Transaction'),
+                  Center(
+                      child: Text('Error: ${snapshot.error}')
+                  ),
+                ],
               );
             }
 
             if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
-              return const Center(
-                child: Text('No transaction available.'),
+              return const Column(
+                children: [
+                  MiniHeader(title: 'Transaction'),
+                  Center(
+                    child: Text('No transaction available.'),
+                  ),
+                ],
               );
             }
             return Column(
               children: [
                 const MiniHeader(title: 'Transaction'),
                 /// Lanjutin kode dibawah sini biar ga numpuk
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 5,right: 20),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: IconButton(
+                          iconSize: 24,
+                          alignment: Alignment.center,
+                          onPressed: (){},
+                          icon: Icon(Icons.tune),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 Expanded(
                   child: ListView(
                     children: snapshot.data!.docs.map((DocumentSnapshot document){

@@ -6,34 +6,38 @@ import 'package:flutter_money_track/components/my_text_field.dart';
 import 'package:flutter_money_track/supportwidgets/support_widgets_functions.dart';
 import 'package:intl/intl.dart';
 
-class NewBillsPage extends StatefulWidget {
-  const NewBillsPage({super.key});
+class NewBudgetPage extends StatefulWidget {
+  const NewBudgetPage({super.key});
 
   @override
-  State<NewBillsPage> createState() => _NewBillsPageState();
+  State<NewBudgetPage> createState() => _NewBudgetPageState();
 }
 
 
-class _NewBillsPageState extends State<NewBillsPage> {
+class _NewBudgetPageState extends State<NewBudgetPage> {
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
   final amountController = TextEditingController();
   final dateController = TextEditingController();
 
-  DateTime selectedDate = DateTime.now();
-
+  DateTimeRange selectedDate = DateTimeRange(start: DateTime.now(), end: DateTime.now().add(Duration(days: 1)));
+  late DateTime startDate;
+  late DateTime endDate;
   Future<void> selectDate() async {
-    DateTime? pickedDate = await showDatePicker(
+
+    DateTimeRange? pickedDate = await showDateRangePicker(
       context: context,
-      initialDate: selectedDate,
-      firstDate: DateTime(2020),
+      initialDateRange: selectedDate,
+      firstDate: DateTime.now(),
       lastDate: DateTime(2100),
     );
 
     if (pickedDate != null){
       setState(() {
         selectedDate = pickedDate;
-        dateController.text = DateFormat('d MMM yyyy').format(pickedDate);
+        startDate = pickedDate.start;
+        endDate = pickedDate.end;
+        dateController.text = '${DateFormat('d MMM yyyy').format(startDate)}  - ${DateFormat('d MMM yyyy').format(endDate)}';
       });
     }
   }
@@ -44,10 +48,11 @@ class _NewBillsPageState extends State<NewBillsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       body: SafeArea(
         child: Stack(
           children: [
-            BigHeader(context, 'Add Bills'),
+            BigHeader(context, 'Add Budget'),
             Positioned(
               top: 120,
               left: 20,
@@ -77,7 +82,7 @@ class _NewBillsPageState extends State<NewBillsPage> {
                     const SizedBox(height: 20,),
                     MyTextField(
                       readOnly: true,
-                      hintText: 'Select Date',
+                      hintText: 'Time Period',
                       controller: dateController,
                       obscureText: false,
                       onTap: () => selectDate(),
@@ -92,14 +97,15 @@ class _NewBillsPageState extends State<NewBillsPage> {
                           displayPopupMessage('Fill the title', context);
                         } else if (amountController.text.isEmpty) {
                           displayPopupMessage('Fill the amount', context);
-                        } else if (dateController.text.isEmpty) {
-                          displayPopupMessage('Fill the due date', context);
+                        } else if (dateController.text.isEmpty){
+                          displayPopupMessage('Fill the time period', context);
                         } else {
-                          MyDatabase().addBillsToDb(
+                          MyDatabase().addBudgetsToDb(
                             titleController.text,
                             descriptionController.text,
                             double.parse(amountController.text),
-                            selectedDate,
+                            startDate,
+                            endDate
                           );
                           Navigator.pop(context);
                         }

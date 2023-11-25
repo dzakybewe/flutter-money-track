@@ -19,20 +19,12 @@ class MyDatabase {
     }
   }
 
-  Future<DocumentSnapshot<Map<String, dynamic>>> getUsername() async {
+  Future<DocumentSnapshot<Map<String, dynamic>>> getUserData() async {
     return await
     db
         .collection("users")
         .doc(currentUser!.email)
         .get();
-  }
-
-  Stream<DocumentSnapshot> getStreamData(String collectionName) {
-    return
-      db
-          .collection(collectionName)
-          .doc(currentUser!.email)
-          .snapshots();
   }
 
   Future<void> addTransactionToDb(
@@ -109,6 +101,40 @@ class MyDatabase {
           .doc(currentUser!.email)
           .collection("user_bills")
           .orderBy("dueDate", descending: true)
+          .snapshots();
+  }
+
+  Future<void> addBudgetsToDb(
+      String title,
+      String description,
+      double amount,
+      DateTime startDate,
+      DateTime endDate,
+      )
+  async {
+    final budgetsData = {
+      'Title': title,
+      'Description': description,
+      'Amount': amount,
+      'startDate': startDate,
+      'endDate': endDate,
+      'amountUsed': 0.0,
+    };
+
+    final usersCollectionRef = db.collection('users');
+    final userDocRef = usersCollectionRef.doc(currentUser!.email);
+
+    final newBudgetsRef = userDocRef.collection('user_budgets').doc();
+
+    await newBudgetsRef.set(budgetsData);
+  }
+
+  Stream<QuerySnapshot> getBudgetsStream() {
+    return
+      db
+          .collection("users")
+          .doc(currentUser!.email)
+          .collection("user_budgets")
           .snapshots();
   }
 }

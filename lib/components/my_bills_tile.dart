@@ -8,6 +8,7 @@ class MyBillsTile extends StatelessWidget {
   final String dueDate;
   final bool isFinished;
   Function(bool?)? onChanged;
+
   MyBillsTile({
     super.key,
     required this.title,
@@ -17,7 +18,6 @@ class MyBillsTile extends StatelessWidget {
     required this.isFinished,
     required this.onChanged
   });
-
 
   @override
   Widget build(BuildContext context) {

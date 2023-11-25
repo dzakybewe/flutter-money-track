@@ -22,7 +22,7 @@ class MyTransactionTile extends StatelessWidget {
             title,
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
-          const SizedBox(width: 5,),
+          const SizedBox(width: 5),
           Text(
             description.isNotEmpty ? description : 'No Description',
             style: const TextStyle(fontSize: 13, color: Colors.grey),

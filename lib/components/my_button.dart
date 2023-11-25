@@ -13,7 +13,7 @@ class MyButton extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: appButtonPrimary,
-        borderRadius: BorderRadius.circular(15)
+        borderRadius: BorderRadius.circular(25)
       ),
       child: ElevatedButton(
           onPressed: onTap,

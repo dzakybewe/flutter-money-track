@@ -24,8 +24,8 @@ class _NewTransactionPageState extends State<NewTransactionPage> {
 
 
 
-  String transactionTypeValue = transactionType.first;
-  String transactionCategoryValue = transactionCategory.first;
+  String? transactionTypeValue;
+  String? transactionCategoryValue;
 
   @override
   Widget build(BuildContext context) {
@@ -72,8 +72,8 @@ class _NewTransactionPageState extends State<NewTransactionPage> {
                           underline: SizedBox(),
                           onChanged: (String? value) {
                             setState(() {
-                              transactionTypeValue = value!;
-                              transactionTypeController.text = transactionTypeValue;
+                              transactionTypeValue = value ?? "";
+                              transactionTypeController.text = transactionTypeValue!;
                             });
                           },
                           items: transactionType.map<DropdownMenuItem<String>>((String value) {
@@ -105,8 +105,8 @@ class _NewTransactionPageState extends State<NewTransactionPage> {
                           underline: SizedBox(),
                           onChanged: (String? value) {
                             setState(() {
-                              transactionCategoryValue = value!;
-                              transactionCategoryController.text = transactionCategoryValue;
+                              transactionCategoryValue = value ?? "";
+                              transactionCategoryController.text = transactionCategoryValue!;
                             });
                           },
                           items: transactionCategory.map<DropdownMenuItem<String>>((String value) {

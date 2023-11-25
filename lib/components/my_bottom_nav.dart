@@ -45,13 +45,6 @@ class MyBottomNav extends StatelessWidget {
             label: 'Budget',
             activeIcon: Icon(Icons.savings)
         ),
-        BottomNavigationBarItem(
-            icon: Icon(
-              Icons.person_outline,
-            ),
-            label: 'Profile',
-            activeIcon: Icon(Icons.person)
-        ),
       ],
 
       currentIndex: selectedIndex,

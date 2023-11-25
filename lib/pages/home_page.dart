@@ -6,6 +6,7 @@ import 'package:flutter_money_track/auth/authentication.dart';
 import 'package:flutter_money_track/auth/my_database.dart';
 import 'package:flutter_money_track/components/colors.dart';
 import 'package:flutter_money_track/components/my_wallet_info.dart';
+import 'package:flutter_money_track/pages/profile_page.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -37,7 +38,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-        future: MyDatabase().getUsername(),
+        future: MyDatabase().getUserData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -89,9 +90,9 @@ class HomePage extends StatelessWidget {
                                   child: Container(
                                     color: appSecondary,
                                     child: IconButton(
-                                      onPressed: signOut,
+                                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage())),
                                       icon: const Icon(
-                                        Icons.logout,
+                                        Icons.person_outline,
                                         color: Colors.white,
                                       ),
                                     ),

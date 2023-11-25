@@ -1,13 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_money_track/auth/authentication.dart';
 
-import '../components/mini_header_background.dart';
-import '../components/mini_header_content.dart';
+import '../auth/my_database.dart';
+import '../components/mini_header.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  const ProfilePage({super.key});
 
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  State<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
@@ -17,80 +19,109 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          MiniHeaderBackground(),
-          MiniHeaderContent(title: 'Profile'),
-          Padding(
-            padding: EdgeInsets.only(left: 15, top: 120, right: 15),
-            child: GestureDetector(
-              onTap: () {
-                FocusScope.of(context).unfocus();
-              },
-              child: ListView(
+      body: FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+        future: MyDatabase().getUserData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: Column(
                 children: [
-                  Center(
-                    child: Stack(
+                  CircularProgressIndicator(),
+                  Text('Loading'),
+                ],
+              ),
+            );
+          } else if (snapshot.hasError) {
+            return Column(
+              children: [
+                const MiniHeader(title: 'Profile'),
+                Center(
+                    child: Text('Error: ${snapshot.error}')
+                ),
+              ],
+            );
+          } else if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+            Map<String, dynamic>? data = snapshot.data!.data() as Map<String, dynamic>;
+            return Column(
+              children: [
+                const MiniHeader(title: 'Profile'),
+                Padding(
+                  padding: const EdgeInsets.only(left: 15, top: 120, right: 15),
+                  child: GestureDetector(
+                    onTap: () {
+                      FocusScope.of(context).unfocus();
+                    },
+                    child: Column(
                       children: [
-                        Container(
-                          width: 130,
-                          height: 130,
-                          decoration: BoxDecoration(
-                            border: Border.all(width: 4, color: Colors.white),
-                            boxShadow: [
-                              BoxShadow(
-                                spreadRadius: 2,
-                                blurRadius: 10,
-                                color: Colors.black.withOpacity(0.1),
-                              )
-                            ],
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(
-                                'https://cdn.pixabay.com/photo/2014/04/13/20/49/cat-323262_1280.jpg',
+                        Center(
+                          child: Stack(
+                            children: [
+                              Container(
+                                width: 130,
+                                height: 130,
+                                decoration: BoxDecoration(
+                                  border: Border.all(width: 4, color: Colors.white),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      spreadRadius: 2,
+                                      blurRadius: 10,
+                                      color: Colors.black.withOpacity(0.1),
+                                    )
+                                  ],
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: NetworkImage(
+                                      'https://cdn.pixabay.com/photo/2014/04/13/20/49/cat-323262_1280.jpg',
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
+                        ),
+                        SizedBox(height: 20),
+                        UserInfo(
+                          name: data['username'],
+                          email: data['email'],
+                          onEditPressed: () async {
+                            // Navigate to the edit profile page and wait for the result
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditProfilePage(
+                                  initialName: name,
+                                  initialEmail: email,
+                                ),
+                              ),
+                            );
+
+                            // Update the profile data if the result is not null
+                            if (result != null && result is Map<String, String>) {
+                              setState(() {
+                                name = result['name']!;
+                                email = result['email']!;
+                              });
+                            }
+                          },
+                          onSignOutPressed: () {
+                            Authentication().signOut();
+                            Navigator.pop(context);
+                            // Implement your sign-out logic here
+                            // For example, you can use Firebase or any other authentication service to sign out the user
+                            // After signing out, you can navigate to the login page or perform any other necessary actions
+                          },
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
-                  UserInfo(
-                    name: name,
-                    email: email,
-                    onEditPressed: () async {
-                      // Navigate to the edit profile page and wait for the result
-                      final result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EditProfilePage(
-                            initialName: name,
-                            initialEmail: email,
-                          ),
-                        ),
-                      );
-
-                      // Update the profile data if the result is not null
-                      if (result != null && result is Map<String, String>) {
-                        setState(() {
-                          name = result['name']!;
-                          email = result['email']!;
-                        });
-                      }
-                    },
-                    onSignOutPressed: () {
-                      // Implement your sign-out logic here
-                      // For example, you can use Firebase or any other authentication service to sign out the user
-                      // After signing out, you can navigate to the login page or perform any other necessary actions
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
+                ),
+              ],
+            );
+          } else {
+            return Center(child: Text('No data', style: TextStyle(color: Colors.black),));
+          }
+        },
       ),
     );
   }
@@ -109,8 +140,7 @@ class EditProfilePage extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          MiniHeaderBackground(),
-          MiniHeaderContent(title: 'Edit Profile'),
+          MiniHeader(title: 'Edit Profile'),
           Padding(
             padding: const EdgeInsets.only(top: 120, left: 15, right: 15),
             child: GestureDetector(
@@ -214,7 +244,8 @@ class UserInfo extends StatelessWidget {
   final VoidCallback onEditPressed;
   final VoidCallback onSignOutPressed;
 
-  UserInfo({
+  const UserInfo({
+    super.key,
     required this.name,
     required this.email,
     required this.onEditPressed,
@@ -240,19 +271,18 @@ class UserInfo extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 8),
         Text(
           email,
           style: TextStyle(fontSize: 16, color: Colors.grey),
         ),
-        SizedBox(height: 8),
+        SizedBox(height: 15),
         ElevatedButton.icon(
           onPressed: onSignOutPressed,
           icon: Icon(Icons.exit_to_app),
           label: Text('Sign Out'),
           style: ElevatedButton.styleFrom(
-            primary: Colors.white,
-            onPrimary: Colors.red,
+            foregroundColor: Colors.red,
+            backgroundColor: Colors.white,
           ),
         ),
       ],

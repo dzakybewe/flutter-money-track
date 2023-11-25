@@ -39,13 +39,23 @@ class _BillsPageState extends State<BillsPage> {
               );
             }
             if (snapshot.hasError) {
-              return Center(
-                  child: Text('Error: ${snapshot.error}')
+              return Column(
+                children: [
+                  const MiniHeader(title: 'Bills'),
+                  Center(
+                      child: Text('Error: ${snapshot.error}')
+                  ),
+                ],
               );
             }
             if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
-              return const Center(
-                child: Text('No bills available.'),
+              return const Column(
+                children: [
+                  MiniHeader(title: 'Bills'),
+                  Center(
+                    child: Text('No bills available.'),
+                  ),
+                ],
               );
             }
             return Column(
