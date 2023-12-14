@@ -8,20 +8,16 @@
 ## Deskripsi Aplikasi
 **MoneyTrack**
 
-MoneyTrack merupakan sistem yang dibuat berbasis mobile pada
-platform android dengan menggunakan bahasa pemrograman Dart, IDE
-berupa Android Studio yang digunakan untuk mengembangkan aplikasi
-android, dan menggunakan framework berupa Flutter yang memiliki
-keuntungan dalam pengembangan aplikasi lintas platform karena
-menggunakan satu kode sumber untuk menghasilkan aplikasi Android dan
-iOS yang konsisten. MoneyTrack juga menggunakan Figma untuk
-mendesain antarmuka pengguna dalam pengembangan aplikasi android
-MoneyTrack.
+MoneyTrack adalah sebuah aplikasi sistem mobile berbasis Android yang dirancang untuk menyediakan pengelolaan keuangan yang efisien dan praktis. Dikembangkan menggunakan bahasa pemrograman Dart, aplikasi ini memanfaatkan Android Studio sebagai Integrated Development Environment (IDE) dan framework Flutter untuk mendukung pengembangan aplikasi lintas platform.
+
+***Install and test MoneyTrack 👇***
+
+[![MoneyTrack](https://img.shields.io/badge/MoneyTrack✅-APK-red.svg?style=for-the-badge&logo=android)](https://drive.google.com/file/d/1g5jVjUkhGE2B9yknh-MJ9RvrahhwJd9F/view?usp=sharing)
 
 ### Fitur Aplikasi
-* Pencatatatn transaksi
-* Kategori pengeluarann
-* Pengigat tagihan
+* Pencatatan transaksi
+* Kategori pengeluaran
+* Pengingat tagihan
 * Pengatur anggaran
 * Laporan keuangan
 
