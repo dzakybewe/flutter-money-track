@@ -14,7 +14,7 @@ class MyBottomNav extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       unselectedFontSize: 13,
-      selectedLabelStyle: TextStyle(fontWeight: FontWeight.w600),
+      selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
       type: BottomNavigationBarType.fixed,
       items: const [
         BottomNavigationBarItem(

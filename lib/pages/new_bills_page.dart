@@ -38,8 +38,14 @@ class _NewBillsPageState extends State<NewBillsPage> {
     }
   }
 
-
-
+  @override
+  void dispose() {
+    titleController.dispose();
+    descriptionController.dispose();
+    amountController.dispose();
+    dateController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,12 +94,8 @@ class _NewBillsPageState extends State<NewBillsPage> {
                     MyButton(
                       text: 'Save',
                       onTap: () {
-                        if (titleController.text.isEmpty) {
-                          displayPopupMessage('Fill the title', context);
-                        } else if (amountController.text.isEmpty) {
-                          displayPopupMessage('Fill the amount', context);
-                        } else if (dateController.text.isEmpty) {
-                          displayPopupMessage('Fill the due date', context);
+                        if (titleController.text.isEmpty || amountController.text.isEmpty || dateController.text.isEmpty) {
+                          displayPopupMessage('Please fill in the blanks', context);
                         } else {
                           MyDatabase().addBillsToDb(
                             titleController.text,

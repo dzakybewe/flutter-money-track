@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_money_track/auth/my_database.dart';
 import 'package:flutter_money_track/pages/new_transaction_page.dart';
 import 'package:flutter_money_track/supportwidgets/format_money.dart';
+import 'package:intl/intl.dart';
 import '../components/colors.dart';
 import '../components/mini_header.dart';
 import '../components/my_transaction_tile.dart';
+import 'detail_transaction_page.dart';
 
 class TransactionPage extends StatefulWidget {
   const TransactionPage({super.key});
@@ -13,8 +15,17 @@ class TransactionPage extends StatefulWidget {
   @override
   State<TransactionPage> createState() => _TransactionPageState();
 }
-
+List<Transaction> allTransactions = [];
 class _TransactionPageState extends State<TransactionPage> {
+
+  List<Transaction> transactions = allTransactions;
+  List<String> categories = ['Shopping', 'Groceries', 'Foods', 'Entertainment', 'Bills', 'Health', 'etc.'];
+  List<String> selectedCategories = [];
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +35,7 @@ class _TransactionPageState extends State<TransactionPage> {
         onPressed: () => {
           Navigator.push(context, MaterialPageRoute(builder: (context) => const NewTransactionPage()))
         },
-        backgroundColor: appPrimary,
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add,),
       ),
       body: StreamBuilder<QuerySnapshot>(
           stream: MyDatabase().getTransactionStream(),
@@ -38,7 +48,7 @@ class _TransactionPageState extends State<TransactionPage> {
             if (snapshot.hasError) {
               return Column(
                 children: [
-                  const MiniHeader(title: 'Transaction'),
+                  const MiniHeader(title: 'Transaction', backIcon: false, rightIcon: false,),
                   Center(
                       child: Text('Error: ${snapshot.error}')
                   ),
@@ -49,46 +59,97 @@ class _TransactionPageState extends State<TransactionPage> {
             if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
               return const Column(
                 children: [
-                  MiniHeader(title: 'Transaction'),
+                  MiniHeader(title: 'Transaction', backIcon: false, rightIcon: false,),
                   Center(
                     child: Text('No transaction available.'),
                   ),
                 ],
               );
             }
+
+            transactions = snapshot.data!.docs.map((DocumentSnapshot document){
+              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+
+              Timestamp q = data['Date'] as Timestamp;
+              DateTime date = q.toDate();
+              return Transaction(
+                title: data['Title'],
+                description: data['Description'],
+                transactionCategory: data['transactionCategory'],
+                amount: FormatMoney().getAmount(data['Amount'].toDouble()),
+                type: data['transactionType'],
+                date: date,
+                documentId: document.id
+              );
+            }).toList();
+            List<Transaction> filteredTransactions = transactions;
+            filteredTransactions = transactions.where((transaction){
+              return selectedCategories.isEmpty || selectedCategories.contains(transaction.transactionCategory);
+            }).toList();
+
             return Column(
               children: [
-                const MiniHeader(title: 'Transaction'),
+                const MiniHeader(title: 'Transaction', backIcon: false, rightIcon: false,),
                 /// Lanjutin kode dibawah sini biar ga numpuk
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 5,right: 20),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(15),
-                        child: IconButton(
-                          iconSize: 24,
-                          alignment: Alignment.center,
-                          onPressed: (){},
-                          icon: Icon(Icons.tune),
-                        ),
-                      ),
+                const SizedBox(height: 20,),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Row(
+                      children: categories
+                          .map((category) => FilterChip(
+                          label: Text(category),
+                          labelStyle: TextStyle(
+                            color: selectedCategories.contains(category) ? Colors.white : appPrimary
+                          ),
+                          selectedColor: appPrimary,
+                          showCheckmark: false,
+                          selected: selectedCategories.contains(category),
+                          onSelected: (selected) {
+                            setState(() {
+                              if (selected) {
+                                selectedCategories.add(category);
+                              } else {
+                                selectedCategories.remove(category);
+                              }
+                            });
+                          }),
+                      ).toList(),
                     ),
-                  ],
+                  ),
                 ),
                 Expanded(
-                  child: ListView(
-                    children: snapshot.data!.docs.map((DocumentSnapshot document){
-                      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                      return MyTransactionTile(
-                        title: data['Title'],
-                        description: data['Description'],
-                        category: data['transactionCategory'],
-                        amount: FormatMoney().getAmount(data['Amount']),
-                        type: data['transactionType'],
+                  child: ListView.builder(
+                    itemCount: filteredTransactions.length,
+                    itemBuilder: (context, index) {
+                      final transaction = filteredTransactions[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailTransactionPage(
+                                type: transaction.type,
+                                description: transaction.description,
+                                category: transaction.transactionCategory,
+                                date: DateFormat('d MMM yyyy').format(transaction.date),
+                                time: DateFormat.jm().format(transaction.date),
+                                amount: transaction.amount,
+                                documentId: transaction.documentId,
+                              ),
+                            ),
+                          );
+                        },
+                        child: MyTransactionTile(
+                          title: transaction.title,
+                          description: transaction.description,
+                          category: transaction.transactionCategory,
+                          amount: transaction.amount,
+                          type: transaction.type,
+                        ),
                       );
-                    }).toList(),
+                    },
                   ),
                 ),
               ],
@@ -97,4 +158,23 @@ class _TransactionPageState extends State<TransactionPage> {
       ),
     );
   }
+}
+class Transaction{
+  final String title;
+  final String description;
+  final String transactionCategory;
+  final String amount;
+  final String type;
+  final DateTime date;
+  final String documentId;
+
+  Transaction({
+    required this.title,
+    required this.description,
+    required this.transactionCategory,
+    required this.amount,
+    required this.type,
+    required this.date,
+    required this.documentId,
+  });
 }

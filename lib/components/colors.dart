@@ -19,5 +19,5 @@ const appButtonPrimary =  LinearGradient(
   ]
 );
 
-final appPrimary = Color(0xFF438883);
-final appSecondary = Color(0xFF2F7E79);
+const appPrimary = Color(0xFF438883);
+const appSecondary = Color(0xFF2F7E79);

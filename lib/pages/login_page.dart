@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_money_track/components/colors.dart';
 import 'package:flutter_money_track/components/my_button.dart';
 import 'package:flutter_money_track/components/my_text_field.dart';
 
@@ -23,13 +24,22 @@ class _LoginPageState extends State<LoginPage> {
   // Login Method
   Future<void> signInWithEmailAndPassword() async {
     try {
-      UserCredential userCredential = await Authentication().signInWithEmailAndPassword(
+      if (context.mounted) {
+        if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+          return displayPopupMessage('Please fill in the blanks first', context);
+        }
+      }
+      await Authentication().signInWithEmailAndPassword(
           email: emailController.text,
           password: passwordController.text
       );
     } on FirebaseAuthException catch(e) {
-      if (context.mounted) return displayPopupMessage(e.message!, context);
-      if (context.mounted) return Navigator.pop(context);
+      if (context.mounted) {
+        if (e.message == 'The supplied auth credential is incorrect, malformed or has expired.'){
+          return displayPopupMessage('Invalid email/password', context);
+        }
+        return displayPopupMessage(e.message!, context);
+      }
     }
   }
 
@@ -52,20 +62,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Logo
-                  const Icon(
-                    Icons.attach_money,
-                    size: 80,
-                  ),
-
-                  const SizedBox(
-                    height: 20,
-                  ),
-
-                  // Welcome Text
-                  const Text('M o n e y T r a c k',
-                      style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
+                  Image.asset('images/logo_moneytrack.png', width: 298, height: 55,),
 
                   const SizedBox(height: 50),
 
@@ -114,6 +111,7 @@ class _LoginPageState extends State<LoginPage> {
                           'Register here',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
+                            color: appSecondary
                           ),
                         ),
                       )

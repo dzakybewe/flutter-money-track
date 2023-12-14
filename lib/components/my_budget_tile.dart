@@ -10,6 +10,7 @@ class MyBudgetTile extends StatelessWidget {
   final String endDate;
   final String amountUsed;
   final double progress;
+  final VoidCallback onChanged;
 
   const MyBudgetTile({
     super.key,
@@ -19,7 +20,8 @@ class MyBudgetTile extends StatelessWidget {
     required this.startDate,
     required this.endDate,
     required this.amountUsed,
-    required this.progress
+    required this.progress,
+    required this.onChanged
   });
 
 
@@ -31,24 +33,51 @@ class MyBudgetTile extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         color: appPrimary,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 5,
+            blurRadius: 7,
+            offset: const Offset(0, 3), // changes position of shadow
+          ),
+        ]
       ),
       child: Column(
         children: [
           // Title
-          Center(
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.w600,
-                color: Colors.white
+          Stack(
+            children: [
+              Center(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
               ),
-            ),
+
+              Positioned.directional(
+                textDirection: TextDirection.rtl,
+                start: 10,
+                top: 1,
+                bottom: 1,
+                child: IconButton(
+                  onPressed: onChanged,
+                  icon: const Icon(Icons.delete_forever),
+                  iconSize: 24,
+                  color: Colors.red,
+                  alignment: AlignmentDirectional.center,
+                ),
+              ),
+            ],
           ),
+          const SizedBox(height: 5,),
           Center(
             child: Text(
               '$startDate - $endDate',
-              style: TextStyle(
+              style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                   color: Colors.white
@@ -63,7 +92,7 @@ class MyBudgetTile extends StatelessWidget {
               children: [
                 Text(
                   amountUsed,
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                       color: Colors.white
@@ -71,7 +100,7 @@ class MyBudgetTile extends StatelessWidget {
                 ),
                 Text(
                   amount,
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                       color: Colors.white

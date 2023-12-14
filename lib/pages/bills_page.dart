@@ -20,6 +20,11 @@ class BillsPage extends StatefulWidget {
 class _BillsPageState extends State<BillsPage> {
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -41,7 +46,7 @@ class _BillsPageState extends State<BillsPage> {
             if (snapshot.hasError) {
               return Column(
                 children: [
-                  const MiniHeader(title: 'Bills'),
+                  const MiniHeader(title: 'Bills', backIcon: false, rightIcon: false,),
                   Center(
                       child: Text('Error: ${snapshot.error}')
                   ),
@@ -51,7 +56,7 @@ class _BillsPageState extends State<BillsPage> {
             if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
               return const Column(
                 children: [
-                  MiniHeader(title: 'Bills'),
+                  MiniHeader(title: 'Bills', backIcon: false, rightIcon: false,),
                   Center(
                     child: Text('No bills available.'),
                   ),
@@ -60,7 +65,7 @@ class _BillsPageState extends State<BillsPage> {
             }
             return Column(
               children: [
-                const MiniHeader(title: 'Bills'),
+                const MiniHeader(title: 'Bills', backIcon: false, rightIcon: false,),
                 /// Lanjutin kode dibawah sini biar ga numpuk
                 Expanded(
                   child: ListView(
@@ -71,7 +76,7 @@ class _BillsPageState extends State<BillsPage> {
                       return MyBillsTile(
                         title: data['Title'],
                         description: data['Description'],
-                        amount: FormatMoney().getAmount(data['Amount']),
+                        amount: FormatMoney().getAmount(data['Amount'].toDouble()),
                         dueDate: DateFormat('d MMM yyyy').format(dueDate),
                         onChanged: (value) => {
                           MyDatabase().db

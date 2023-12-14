@@ -13,7 +13,7 @@ class NewTransactionPage extends StatefulWidget {
 }
 
 var transactionType = ['Expense', 'Income'];
-var transactionCategory = ['Shopping', 'Groceries', 'Foods', 'Entertainment'];
+var transactionCategory = ['Shopping', 'Groceries', 'Foods', 'Entertainment', 'Bills', 'Health', 'etc.'];
 
 class _NewTransactionPageState extends State<NewTransactionPage> {
   final titleController = TextEditingController();
@@ -21,11 +21,21 @@ class _NewTransactionPageState extends State<NewTransactionPage> {
   final amountController = TextEditingController();
   final transactionTypeController = TextEditingController();
   final transactionCategoryController = TextEditingController();
-
-
+  final budgetController = TextEditingController();
 
   String? transactionTypeValue;
   String? transactionCategoryValue;
+
+  @override
+  void dispose() {
+    titleController.dispose();
+    descriptionController.dispose();
+    amountController.dispose();
+    transactionTypeController.dispose();
+    transactionCategoryController.dispose();
+    budgetController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,16 +48,17 @@ class _NewTransactionPageState extends State<NewTransactionPage> {
               top: 120,
               left: 20,
               right: 20,
-              child: Container(
-                  padding: EdgeInsets.all(15),
-                  margin: EdgeInsets.all(15),
+              child: SingleChildScrollView(
+                child: Container(
+                  padding: const EdgeInsets.all(15),
+                  margin: const EdgeInsets.all(15),
                   width: double.infinity,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
+                    boxShadow: const [
                       BoxShadow(
-                        color: const Color.fromRGBO(0, 0, 0, 0.08),
-                        offset: const Offset(0, 22),
+                        color: Color.fromRGBO(0, 0, 0, 0.08),
+                        offset: Offset(0, 22),
                         blurRadius: 35,
                       ),
                     ],
@@ -60,16 +71,16 @@ class _NewTransactionPageState extends State<NewTransactionPage> {
                             fillColor: const Color(0xFFC4C4C4).withAlpha(30),
                             filled: true,
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                                borderSide: BorderSide.none
+                              borderRadius: BorderRadius.circular(15),
+                              borderSide: BorderSide.none,
                             ),
-                            contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5)
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5)
                         ),
                         child: DropdownButton(
                           isExpanded: true,
-                          hint: Text('Transaction Type'),
+                          hint: const Text('Transaction Type'),
                           value: transactionTypeValue,
-                          underline: SizedBox(),
+                          underline: const SizedBox(),
                           onChanged: (String? value) {
                             setState(() {
                               transactionTypeValue = value ?? "";
@@ -81,65 +92,71 @@ class _NewTransactionPageState extends State<NewTransactionPage> {
                           }).toList(),
                         ),
                       ),
-                      SizedBox(height: 20,),
+                      const SizedBox(height: 20,),
                       MyTextField(hintText: 'Title', controller: titleController, obscureText: false, inputType: TextInputType.text,),
-                      SizedBox(height: 20,),
+                      const SizedBox(height: 20,),
                       MyTextField(hintText: 'Description', controller: descriptionController, obscureText: false, inputType: TextInputType.text,),
-                      SizedBox(height: 20,),
+                      const SizedBox(height: 20,),
                       MyTextField(hintText: 'Amount', controller: amountController, obscureText: false, inputType: TextInputType.number,),
-                      SizedBox(height: 20,),
+                      const SizedBox(height: 20,),
                       InputDecorator(
                         decoration: InputDecoration(
-                            fillColor: const Color(0xFFC4C4C4).withAlpha(30),
-                            filled: true,
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                                borderSide: BorderSide.none
-                            ),
-                            contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5)
+                          fillColor: const Color(0xFFC4C4C4).withAlpha(30),
+                          filled: true,
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
+                              borderSide: BorderSide.none
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                         ),
                         child: DropdownButton(
                           isExpanded: true,
-                          hint: Text('Transaction Type'),
+                          hint: transactionTypeController.text == 'Expense' || transactionTypeController.text.isEmpty ? const Text('Expense Category') : const Text('Income, no Category'),
                           value: transactionCategoryValue,
-                          underline: SizedBox(),
-                          onChanged: (String? value) {
+                          underline: const SizedBox(),
+                          onChanged: transactionTypeController.text == 'Expense' ? (String? value) {
                             setState(() {
                               transactionCategoryValue = value ?? "";
                               transactionCategoryController.text = transactionCategoryValue!;
                             });
-                          },
+                          } : null,
                           items: transactionCategory.map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(value: value, child: Text(value));
                           }).toList(),
                         ),
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20,),
+                      MyTextField(
+                        hintText: transactionTypeController.text == 'Expense' || transactionTypeController.text.isEmpty ? 'Name of Budget (case sensitive)' : 'No need to fill Budget',
+                        controller: budgetController,
+                        obscureText: false,
+                        inputType: TextInputType.text,
+                        readOnly: transactionTypeController.text == 'Expense' || transactionTypeController.text.isEmpty ? null : true
+                      ),
+                      const SizedBox(height: 20),
                       MyButton(
                         text: 'Save',
                         onTap: () {
-                          if (titleController.text.isEmpty) {
-                            displayPopupMessage('Fill the title', context);
-                          } else if (amountController.text.isEmpty) {
-                            displayPopupMessage('Fill the amount', context);
-                          } else if (transactionTypeController.text.isEmpty){
-                            displayPopupMessage('Is it income or expense?', context);
-                          } else if (transactionCategoryController.text.isEmpty) {
+                          if (titleController.text.isEmpty || amountController.text.isEmpty || transactionTypeController.text.isEmpty) {
+                            displayPopupMessage('Please fill in the blanks', context);
+                          } else if (transactionTypeController.text == 'Expense' && transactionCategoryController.text.isEmpty) {
                             displayPopupMessage('Fill the category', context);
                           } else {
                             MyDatabase().addTransactionToDb(
-                                titleController.text,
-                                descriptionController.text,
-                                double.parse(amountController.text),
-                                transactionTypeController.text,
-                                transactionCategoryController.text
+                              titleController.text,
+                              descriptionController.text,
+                              double.parse(amountController.text),
+                              transactionTypeController.text,
+                              transactionCategoryController.text,
+                              budgetController.text
                             );
                             Navigator.pop(context);
                           }
-                        }
+                        },
                       ),
                     ],
-                  )
+                  ),
+                ),
               ),
             ),
           ],

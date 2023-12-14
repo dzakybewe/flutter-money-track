@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-
 import 'colors.dart';
 
 class MiniHeader extends StatelessWidget {
   final String title;
-  const MiniHeader({super.key, required this.title});
+  final bool backIcon;
+  final bool rightIcon;
+  const MiniHeader({super.key, required this.title, required this.backIcon, required this.rightIcon,});
 
   @override
   Widget build(BuildContext context) {
@@ -19,17 +20,51 @@ class MiniHeader extends StatelessWidget {
         ),
       ),
       child: SafeArea(
-        child: Center(
-          child: Text(
-            title,
-            style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 18,
-                color: Colors.white
+        child: Stack(
+          children: [
+            Center(
+              child: Text(
+                title,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 20,
+                    color: Colors.white
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
+            if (backIcon)
+              Positioned.directional(
+                textDirection: TextDirection.ltr,
+                start: 12,
+                top: 1,
+                bottom: 1,
+                child: IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.arrow_back),
+                  iconSize: 24,
+                  color: Colors.white,
+                  alignment: AlignmentDirectional.center,
+                ),
+              ),
+            if (rightIcon)
+              Positioned.directional(
+                textDirection: TextDirection.rtl,
+                start: 12,
+                top: 1,
+                bottom: 1,
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.delete),
+                  iconSize: 24,
+                  color: Colors.red,
+                  alignment: AlignmentDirectional.center,
+                ),
+              ),
+          ]
+        )
+      )
     );
   }
 }

@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_money_track/auth/authentication.dart';
 import 'package:flutter_money_track/auth/my_database.dart';
 import 'package:flutter_money_track/components/colors.dart';
+import 'package:flutter_money_track/components/my_bar_graph.dart';
 import 'package:flutter_money_track/components/my_wallet_info.dart';
 import 'package:flutter_money_track/pages/profile_page.dart';
 
@@ -17,24 +17,6 @@ class HomePage extends StatelessWidget {
     await Authentication().signOut();
   }
 
-  List<BarChartGroupData> getWeeklyBarGroups() {
-    // Implement logic to get weekly transaction data
-    // Example data (replace it with your actual data)
-    return List.generate(
-      7,
-          (index) => BarChartGroupData(
-        x: index,
-        barRods: [
-          BarChartRodData(
-            width: 16,
-            toY: 10.0, // Replace with your actual value
-            color: Colors.blue,
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
@@ -42,7 +24,7 @@ class HomePage extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(),
+              child: Text("Wait"),
             );
           } else if (snapshot.hasError) {
             return Text("Error: ${snapshot.error}");
@@ -53,7 +35,6 @@ class HomePage extends StatelessWidget {
               children: [
                 Stack(
                   children: [
-                    // Background
                     Container(
                       height: 240,
                       width: double.infinity,
@@ -74,12 +55,12 @@ class HomePage extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(top: 30, left: 15),
+                                padding: const EdgeInsets.only(top: 30, left: 15),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Hello,', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white),),
-                                    Text(user['username'], style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.white),),
+                                    const Text('Hello,', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white),),
+                                    Text(user['username'], style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.white),),
                                   ],
                                 ),
                               ),
@@ -105,7 +86,7 @@ class HomePage extends StatelessWidget {
 
                           const SizedBox(height: 30),
                           //// balance info
-                          MyWalletInfo(),
+                          const MyWalletInfo(),
 
                           const SizedBox(height: 20,),
                         ],
@@ -114,63 +95,50 @@ class HomePage extends StatelessWidget {
                   ],
                 ),
                 /// Lanjutin kode dibawah sini biar ga numpuk
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                            decoration: BoxDecoration(
-                                borderRadius : BorderRadius.circular(10),
-                                color: appPrimary
-                            ),
-                            child: Text(
-                              'Week',
-                              style: TextStyle(color: Colors.white),
-                            ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                          decoration: BoxDecoration(
+                              borderRadius : BorderRadius.circular(10),
+                              color: appPrimary
                           ),
-                          Text('Month'),
-                          Text('Year'),
-                        ],
-                      ),
-                      SizedBox(height: 15,),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 40),
-                        child: Text(
-                          'Statistics',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 18,
-                            color: Colors.black
+                          child: const Text(
+                            'Week',
+                            style: TextStyle(color: Colors.white),
                           ),
                         ),
+                        const Text('Month'),
+                        const Text('Year'),
+                      ],
+                    ),
+                    const SizedBox(height: 15,),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 40),
+                      child: Text(
+                        'Statistics',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 18,
+                          color: Colors.black
+                        ),
                       ),
-                      SizedBox(height: 15,),
+                    ),
+                    const SizedBox(height: 15,),
 
-                      //Bar chart
-                      Expanded(
-                        child: BarChart(
-                          BarChartData(
-                            titlesData: FlTitlesData(
-                              leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true)),
-                              bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true)),
-                            ),
-                            borderData: FlBorderData(show: true),
-                            barGroups: getWeeklyBarGroups(),
-                          )
-                        ),
-                      )
-                    ],
-                  ),
+                    /// Graphic Chart to show weekly transaction recap
+                    const MyBarGraph(),
+                  ],
                 ),
               ],
             );
 
           } else {
-            return Text('No data');
+            return const Text('No data');
           }
         }
     );

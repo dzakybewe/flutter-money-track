@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_money_track/auth/authentication.dart';
-
 import '../auth/my_database.dart';
 import '../components/mini_header.dart';
 
@@ -13,8 +12,11 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  String name = 'Wahyu Doong Kie';
-  String email = 'WahyuDoongKie@gmail.com';
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +36,7 @@ class _ProfilePageState extends State<ProfilePage> {
           } else if (snapshot.hasError) {
             return Column(
               children: [
-                const MiniHeader(title: 'Profile'),
+                const MiniHeader(title: 'Profile', backIcon: true, rightIcon: false,),
                 Center(
                     child: Text('Error: ${snapshot.error}')
                 ),
@@ -44,7 +46,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Map<String, dynamic>? data = snapshot.data!.data() as Map<String, dynamic>;
             return Column(
               children: [
-                const MiniHeader(title: 'Profile'),
+                const MiniHeader(title: 'Profile', backIcon: true, rightIcon: false,),
                 Padding(
                   padding: const EdgeInsets.only(left: 15, top: 120, right: 15),
                   child: GestureDetector(
@@ -69,7 +71,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     )
                                   ],
                                   shape: BoxShape.circle,
-                                  image: DecorationImage(
+                                  image: const DecorationImage(
                                     fit: BoxFit.cover,
                                     image: NetworkImage(
                                       'https://cdn.pixabay.com/photo/2014/04/13/20/49/cat-323262_1280.jpg',
@@ -80,36 +82,21 @@ class _ProfilePageState extends State<ProfilePage> {
                             ],
                           ),
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         UserInfo(
                           name: data['username'],
                           email: data['email'],
-                          onEditPressed: () async {
-                            // Navigate to the edit profile page and wait for the result
-                            final result = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => EditProfilePage(
-                                  initialName: name,
-                                  initialEmail: email,
-                                ),
-                              ),
-                            );
-
-                            // Update the profile data if the result is not null
-                            if (result != null && result is Map<String, String>) {
-                              setState(() {
-                                name = result['name']!;
-                                email = result['email']!;
-                              });
-                            }
+                          onEditPressed: () {
+                            showDialog(context: context, builder: (context){
+                              return const AlertDialog(
+                                title: Text('This feature will come soon!', textAlign: TextAlign.center,),
+                                content: Text('Stay Tuned!', textAlign: TextAlign.center,),
+                              );
+                            });
                           },
                           onSignOutPressed: () {
                             Authentication().signOut();
                             Navigator.pop(context);
-                            // Implement your sign-out logic here
-                            // For example, you can use Firebase or any other authentication service to sign out the user
-                            // After signing out, you can navigate to the login page or perform any other necessary actions
                           },
                         ),
                       ],
@@ -119,7 +106,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ],
             );
           } else {
-            return Center(child: Text('No data', style: TextStyle(color: Colors.black),));
+            return const Center(child: Text('No data', style: TextStyle(color: Colors.black),));
           }
         },
       ),
@@ -131,7 +118,7 @@ class EditProfilePage extends StatelessWidget {
   final TextEditingController nameController;
   final TextEditingController emailController;
 
-  EditProfilePage({required String initialName, required String initialEmail})
+  EditProfilePage({super.key, required String initialName, required String initialEmail})
       : nameController = TextEditingController(text: initialName),
         emailController = TextEditingController(text: initialEmail);
 
@@ -140,7 +127,7 @@ class EditProfilePage extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          MiniHeader(title: 'Edit Profile'),
+          const MiniHeader(title: 'Edit Profile', backIcon: true, rightIcon: false,),
           Padding(
             padding: const EdgeInsets.only(top: 120, left: 15, right: 15),
             child: GestureDetector(
@@ -165,7 +152,7 @@ class EditProfilePage extends StatelessWidget {
                               )
                             ],
                             shape: BoxShape.circle,
-                            image: DecorationImage(
+                            image: const DecorationImage(
                               fit: BoxFit.cover,
                               image: NetworkImage(
                                 'https://cdn.pixabay.com/photo/2014/04/13/20/49/cat-323262_1280.jpg',
@@ -176,15 +163,11 @@ class EditProfilePage extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   EditProfileForm(
                     nameController: nameController,
                     emailController: emailController,
                     onSavePressed: () {
-                      // Save the edited profile details
-                      // You can implement the logic to update the profile here
-
-                      // Pass the edited data back to the ProfilePage
                       Navigator.pop(
                         context,
                         {
@@ -209,7 +192,7 @@ class EditProfileForm extends StatelessWidget {
   final TextEditingController emailController;
   final VoidCallback onSavePressed;
 
-  EditProfileForm({
+  const EditProfileForm({super.key, 
     required this.nameController,
     required this.emailController,
     required this.onSavePressed,
@@ -221,17 +204,19 @@ class EditProfileForm extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextField(
+          readOnly: true,
           controller: nameController,
-          decoration: InputDecoration(labelText: 'Edit Name'),
+          decoration: const InputDecoration(labelText: 'Edit Name'),
         ),
         TextField(
+          readOnly: true,
           controller: emailController,
-          decoration: InputDecoration(labelText: 'Edit Email'),
+          decoration: const InputDecoration(labelText: 'Edit Email'),
         ),
-        SizedBox(height: 16.0),
+        const SizedBox(height: 16.0),
         ElevatedButton(
           onPressed: onSavePressed,
-          child: Text('Save'),
+          child: const Text('Save'),
         ),
       ],
     );
@@ -262,24 +247,24 @@ class UserInfo extends StatelessWidget {
           children: [
             Text(
               name,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             IconButton(
-              icon: Icon(Icons.edit, size: 20),
+              icon: const Icon(Icons.edit, size: 20),
               onPressed: onEditPressed,
             ),
           ],
         ),
         Text(
           email,
-          style: TextStyle(fontSize: 16, color: Colors.grey),
+          style: const TextStyle(fontSize: 16, color: Colors.grey),
         ),
-        SizedBox(height: 15),
+        const SizedBox(height: 15),
         ElevatedButton.icon(
           onPressed: onSignOutPressed,
-          icon: Icon(Icons.exit_to_app),
-          label: Text('Sign Out'),
+          icon: const Icon(Icons.exit_to_app),
+          label: const Text('Sign Out'),
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.red,
             backgroundColor: Colors.white,

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_money_track/auth/authentication.dart';
 import 'package:flutter_money_track/auth/my_database.dart';
+import 'package:flutter_money_track/components/colors.dart';
 import 'package:flutter_money_track/components/my_button.dart';
 import 'package:flutter_money_track/components/my_text_field.dart';
 import 'package:flutter_money_track/supportwidgets/support_widgets_functions.dart';
@@ -17,7 +18,6 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  // Text Editing Controller
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -25,41 +25,31 @@ class _RegisterPageState extends State<RegisterPage> {
 
   // Register Method
   Future<void> createUserWithEmailAndPassword() async {
-    showDialog(
-        context: context,
-        builder: (context)
-        => const Center(
-          child: CircularProgressIndicator(),
-        )
-    );
 
-    if (passwordController.text != confirmPasswordController.text){
-      // loading popup
-      Navigator.pop(context);
-      
-      displayPopupMessage('Passwords don\'t match!', context);
-    } else {
-      try {
-        UserCredential userCredential = await Authentication().createUserWithEmailAndPassword(
-            email: emailController.text,
-            password: passwordController.text
-        );
+    try {
+      if (context.mounted) {
+        if (usernameController.text.isEmpty || emailController.text.isEmpty || passwordController.text.isEmpty) return displayPopupMessage('Please fill in the blanks', context);
+        if (passwordController.text != confirmPasswordController.text) return displayPopupMessage('Passwords don\'t match', context);
+      }
 
-        /// add user to firestore
-        MyDatabase().addNewUserToDb(
+      UserCredential userCredential = await Authentication().createUserWithEmailAndPassword(
+          email: emailController.text,
+          password: passwordController.text
+      );
+
+      /// add user to firestore
+      MyDatabase().addNewUserToDb(
           userCredential,
           usernameController.text
-        );
-
-      } on FirebaseAuthException catch(e) {
-        if(context.mounted) return Navigator.pop(context);
-
-        if(context.mounted) return displayPopupMessage(e.message!, context);
+      );
+    } on FirebaseAuthException catch(e) {
+      if (context.mounted) {
+        if (e.message == 'The email address is already in use by another account.'){
+          return displayPopupMessage('Email address has already been used', context);
+        }
+        return displayPopupMessage(e.message!, context);
       }
     }
-
-
-
   }
 
   @override
@@ -83,22 +73,7 @@ class _RegisterPageState extends State<RegisterPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Logo
-                  const Icon(
-                    Icons.attach_money,
-                    size: 80,
-                  ),
-
-                  const SizedBox(height: 20,),
-
-                  // Welcome Text
-                  const Text(
-                      'M o n e y T r a c k',
-                      style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w900
-                      )
-                  ),
+                  Image.asset('images/logo_moneytrack.png', width: 298, height: 55,),
 
                   const SizedBox(height: 50),
 
@@ -161,6 +136,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           'Login here',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
+                            color: appSecondary
                           ),
                         ),
                       )

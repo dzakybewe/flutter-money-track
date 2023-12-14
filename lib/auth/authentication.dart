@@ -25,6 +25,7 @@ class Authentication {
         email: email,
         password: password,
     );
+
   }
 
   // for logout

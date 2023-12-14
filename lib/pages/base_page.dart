@@ -17,16 +17,21 @@ class _BasePageState extends State<BasePage> {
   int selectedIndex = 0;
   List pages = [
     HomePage(),
-    TransactionPage(),
-    BillsPage(),
-    BudgetPage(),
-    ProfilePage(),
+    const TransactionPage(),
+    const BillsPage(),
+    const BudgetPage(),
+    const ProfilePage(),
   ];
 
   void onClickedBottomNav(int index) {
     setState(() {
       selectedIndex = index;
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -37,7 +42,6 @@ class _BasePageState extends State<BasePage> {
         selectedIndex: selectedIndex,
         onClickedBottomNav: onClickedBottomNav,
       ),
-
     );
   }
 }

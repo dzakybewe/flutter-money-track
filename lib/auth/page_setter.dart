@@ -21,6 +21,11 @@ class _PageSetterState extends State<PageSetter> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (showLoginPage) {
       return LoginPage(onPressed: toggleLoginRegister);

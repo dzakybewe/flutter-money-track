@@ -5,19 +5,30 @@ import 'package:flutter_money_track/supportwidgets/format_money.dart';
 
 import 'colors.dart';
 
-class MyWalletInfo extends StatelessWidget {
-  MyWalletInfo({super.key});
+class MyWalletInfo extends StatefulWidget {
+  const MyWalletInfo({super.key});
 
+  @override
+  State<MyWalletInfo> createState() => _MyWalletInfoState();
+}
+
+class _MyWalletInfoState extends State<MyWalletInfo> {
   double walletBalance = 0;
   double totalIncome = 0;
   double totalExpense = 0;
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: MyDatabase().getSumAmount(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasData) {
-          snapshot.data!.docs.forEach((doc) {
+          for (var doc in snapshot.data!.docs) {
             if (doc['transactionType'] == 'Income') {
               totalIncome += doc['Amount'];
               walletBalance += doc['Amount'];
@@ -25,10 +36,10 @@ class MyWalletInfo extends StatelessWidget {
               totalExpense += doc['Amount'];
               walletBalance -= doc['Amount'];
             }
-          });
+          }
           return Container(
             padding: const EdgeInsets.all(15),
-            height: 150,
+            height: 175,
             width: 320,
             decoration: BoxDecoration(
               color: appSecondary,
@@ -43,36 +54,40 @@ class MyWalletInfo extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Total Balance', style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w600),),
-                        SizedBox(height: 5,),
-                        Text(FormatMoney().getAmount(walletBalance), style: TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),),
+                        const Text('Total Balance', style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w600),),
+                        const SizedBox(height: 5,),
+                        Text(FormatMoney().getAmount(walletBalance), style: const TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),),
                       ],
                     )
                   ],
                 ),
 
-                SizedBox(height: 25),
+                const SizedBox(height: 25),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // Income
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Income', style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w500)),
-                        const SizedBox(height: 5,),
-                        Text(FormatMoney().getAmount(totalIncome), style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w600)),
-                      ],
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Income', style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w500)),
+                          const SizedBox(height: 5,),
+                          Text(FormatMoney().getAmount(totalIncome), style: const TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w600)),
+                        ],
+                      ),
                     ),
 
                     // Expense
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text('Expenses', style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w500)),
-                        const SizedBox(height: 5),
-                        Text(FormatMoney().getAmount(totalExpense), style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w600)),
-                      ],
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          const Text('Expenses', style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w500)),
+                          const SizedBox(height: 5),
+                          Text(FormatMoney().getAmount(totalExpense), style: const TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w600)),
+                        ],
+                      ),
                     )
                   ],
                 )
@@ -93,9 +108,8 @@ class MyWalletInfo extends StatelessWidget {
             ),
           );
         } else {
-          return Text('Loading');
+          return const Text('Loading');
         }
-
       },
     );
   }

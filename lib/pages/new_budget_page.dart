@@ -20,11 +20,10 @@ class _NewBudgetPageState extends State<NewBudgetPage> {
   final amountController = TextEditingController();
   final dateController = TextEditingController();
 
-  DateTimeRange selectedDate = DateTimeRange(start: DateTime.now(), end: DateTime.now().add(Duration(days: 1)));
+  DateTimeRange selectedDate = DateTimeRange(start: DateTime.now(), end: DateTime.now().add(const Duration(days: 1)));
   late DateTime startDate;
   late DateTime endDate;
   Future<void> selectDate() async {
-
     DateTimeRange? pickedDate = await showDateRangePicker(
       context: context,
       initialDateRange: selectedDate,
@@ -42,13 +41,18 @@ class _NewBudgetPageState extends State<NewBudgetPage> {
     }
   }
 
-
-
+  @override
+  void dispose() {
+    titleController.dispose();
+    descriptionController.dispose();
+    amountController.dispose();
+    dateController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: SafeArea(
         child: Stack(
           children: [
@@ -93,12 +97,8 @@ class _NewBudgetPageState extends State<NewBudgetPage> {
                     MyButton(
                       text: 'Save',
                       onTap: () {
-                        if (titleController.text.isEmpty) {
-                          displayPopupMessage('Fill the title', context);
-                        } else if (amountController.text.isEmpty) {
-                          displayPopupMessage('Fill the amount', context);
-                        } else if (dateController.text.isEmpty){
-                          displayPopupMessage('Fill the time period', context);
+                        if (titleController.text.isEmpty || amountController.text.isEmpty || dateController.text.isEmpty) {
+                          displayPopupMessage('Please fill in the blanks', context);
                         } else {
                           MyDatabase().addBudgetsToDb(
                             titleController.text,

@@ -19,6 +19,7 @@ class MyDatabase {
     }
   }
 
+
   Future<DocumentSnapshot<Map<String, dynamic>>> getUserData() async {
     return await
     db
@@ -32,7 +33,8 @@ class MyDatabase {
       String description,
       double amount,
       String transactionType,
-      String transactionCategory
+      String transactionCategory,
+      String budgetName,
       )
   async {
     final transactionData = {
@@ -42,12 +44,13 @@ class MyDatabase {
       'transactionType': transactionType,
       'transactionCategory': transactionCategory,
       'Date': DateTime.now(),
+      'budgetName': budgetName
     };
 
     final usersCollectionRef = db.collection('users');
     final userTransactionDocRef = usersCollectionRef.doc(currentUser!.email);
 
-    final newTransactionRef = userTransactionDocRef.collection('user_transactions').doc(); // Assuming 'user_transactions' as sub-collection
+    final newTransactionRef = userTransactionDocRef.collection('user_transactions').doc();
 
     await newTransactionRef.set(transactionData);
   }
@@ -136,5 +139,15 @@ class MyDatabase {
           .doc(currentUser!.email)
           .collection("user_budgets")
           .snapshots();
+  }
+
+  Future<DocumentSnapshot<Map<String, dynamic>>> getBudgetDetail(String documentId) async {
+    return await
+    db
+        .collection("users")
+        .doc(currentUser!.email)
+        .collection('user_budgets')
+        .doc(documentId)
+        .get();
   }
 }

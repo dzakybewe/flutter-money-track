@@ -33,31 +33,10 @@ class MyButton extends StatelessWidget {
           child: Center(
             child: Text(
               text,
+              style: const TextStyle(color: Colors.white),
             ),
           )
       ),
     );
   }
 }
-
-
-// GestureDetector(
-//       onTap: onTap,
-//       child: Container(
-//         decoration: BoxDecoration(
-//             color: Colors.black,
-//             borderRadius: BorderRadius.circular(15)
-//         ),
-//         padding: const EdgeInsets.all(10),
-//         child: Center(
-//           child: Text(
-//             text,
-//             style: const TextStyle(
-//               color: Colors.white,
-//               fontSize: 16,
-//               fontWeight: FontWeight.bold,
-//             ),
-//           ),
-//         ),
-//       ),
-//     );

@@ -30,12 +30,12 @@ class MyBillsTile extends StatelessWidget {
         checkColor: appPrimary,
         activeColor: Colors.transparent,
         side: MaterialStateBorderSide.resolveWith(
-              (states) => BorderSide(width: 2.5, color: appPrimary, strokeAlign: 2),
+              (states) => const BorderSide(width: 2.5, color: appPrimary, strokeAlign: 2),
         ),
       ),
       title: Text(
         title,
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
       ),
       subtitle: Text(
         description.isNotEmpty ? description : 'No Description',
